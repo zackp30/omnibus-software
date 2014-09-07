@@ -30,11 +30,21 @@ end
 source url: "http://dl.bintray.com/oneclick/rubyinstaller/ruby-#{version}-i386-mingw32.7z?direct"
 
 build do
-  # Robocopy's return code is 1 if it succesfully copies over the
-  # files and 0 if the files are already existing at the destination
+  #
+  # Robocopy's return codes are as follows:
+  #
+  #   * 0 - No errors occurred, and no copying was done. The source and
+  #         destination directory trees are completely synchronized.
+  #   * 1 - One or more files were copied successfully (that is, new files
+  #         have arrived).
+  #   * 3 - Some files were copied. Additional files were present. No
+  #         failure was encountered.
+  #
+  #  A full list of valid exit codes can be found here:
+  #  http://ss64.com/nt/robocopy-exit.html
   #
   # TODO: Move this to the "copy" DSL method
-  command "robocopy . #{windows_safe_path(install_dir)}\\embedded\\ /MIR", :returns => [0, 1]
+  command "robocopy . #{windows_safe_path(install_dir)}\\embedded\\ /MIR", :returns => [0, 1, 3]
 
   # Ruby 2.X dl.rb gives an annoying warning message on Windows:
   # DL is deprecated, please use Fiddle
