@@ -16,16 +16,22 @@
 
 # We use the version in util-linux, and only build the libuuid subdirectory
 name "libzmq"
-default_version "v2.1.11"
+default_version "4.0.4"
 
 dependency "autoconf"
 dependency "automake"
 dependency "libtool"
 dependency "libuuid"
+dependency "libsodium"
 
-source git: "git://github.com/zeromq/zeromq2-x.git"
 
-relative_path "zeromq2-x"
+#
+# It would be nice to use the github repo, but they aren't using version tags so it's a pain.
+#
+source :url => "http://download.zeromq.org/zeromq-#{default_version}.tar.gz", 
+       :md5 => "f3c3defbb5ef6cc000ca65e529fdab3b"
+
+relative_path "zeromq-#{default_version}"
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
