@@ -28,10 +28,10 @@ dependency "libsodium"
 #
 # It would be nice to use the github repo, but they aren't using version tags so it's a pain.
 #
-source :url => "http://download.zeromq.org/zeromq-#{default_version}.tar.gz", 
-       :md5 => "f3c3defbb5ef6cc000ca65e529fdab3b"
+source url: "http://download.zeromq.org/zeromq-#{version}.tar.gz", 
+       md5: "f3c3defbb5ef6cc000ca65e529fdab3b"
 
-relative_path "zeromq-#{default_version}"
+relative_path "zeromq-#{version}"
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
