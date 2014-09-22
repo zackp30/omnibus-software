@@ -25,22 +25,15 @@ dependency "libtool"
 
 
 # perhaps use git https://github.com/jedisct1/libsodium/
-source :url => "http://download.libsodium.org/libsodium/releases/libsodium-#{default_version}.tar.gz",
-       :md5 => "c224fe3923d1dcfe418c65c8a7246316"
+source url: "http://download.libsodium.org/libsodium/releases/libsodium-#{version}.tar.gz",
+       md5: "c224fe3923d1dcfe418c65c8a7246316"
 
-relative_path "libsodium-#{default_version}"
+relative_path "libsodium-#{version}"
 
 build do
-  env = {
-    "PATH" => "#{install_dir}/embedded/bin:#{ENV["PATH"]}",
-    "LDFLAGS" => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
-    "CXXFLAGS" => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
-    "LD_RUN_PATH" => "#{install_dir}/embedded/lib"
-  }
-  command ["./configure",
-           "--prefix=#{install_dir}/embedded",
-           ].join(" "),
-          :env => env
-  command "make -j #{workers}", :env => {"LD_RUN_PATH" => "#{install_dir}/embedded/bin"}
-  command "make install", :env => {"LD_RUN_PATH" => "#{install_dir}/embedded/bin"}
+  env = with_standard_compiler_flags(with_embedded_path)
+  command "./configure" \
+          " --prefix=#{install_dir}/embedded", env: env
+  make "-j #{workers}", env: env
+  make "install", env: env
 end
