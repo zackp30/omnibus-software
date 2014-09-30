@@ -16,7 +16,7 @@
 #
 
 name "bats"
-default_version "0.4.0"
+default_version "v0.4.0"
 
 source git: "https://github.com/sstephenson/bats.git"
 
