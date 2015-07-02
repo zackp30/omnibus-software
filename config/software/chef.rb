@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 name "chef"
-default_version "master"
+default_version "tc/fix-chef-user"
 
 source git: "git://github.com/chef/chef"
 
