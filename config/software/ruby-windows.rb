@@ -27,6 +27,10 @@ version "2.0.0-p451" do
   source md5: "37feadb0230e7f475a8591d1807ecfec"
 end
 
+version "2.0.0-p645" do
+  source md5: "1a59c016a3ea0714b06d7a5f6aa4157a"
+end
+
 version "2.1.3" do
   source md5: "60e39aaab140c3a22abdc04ec2017968"
 end
