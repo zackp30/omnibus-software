@@ -20,7 +20,6 @@ dependency "zlib"
 dependency "cacerts"
 dependency "makedepend" unless aix?
 dependency "patch" if solaris2?
-dependency "openssl-fips"
 
 default_version "1.0.1p"
 
@@ -28,6 +27,14 @@ source url: "https://www.openssl.org/source/openssl-#{version}.tar.gz"
 
 version("1.0.1m") { source md5: "d143d1555d842a069cb7cc34ba745a06" }
 version("1.0.1p") { source md5: "7563e92327199e0067ccd0f79f436976" }
+
+if project.overrides[:openssl].nil?
+  fips_mode = :false
+else
+  fips_mode = project.overrides[:openssl][:fips]
+end
+
+dependency "openssl-fips" if fips_mode
 
 relative_path "openssl-#{version}"
 
@@ -90,6 +97,13 @@ build do
     "zlib",
     "shared",
   ].join(" ")
+
+  fips_args = [
+    "--with-fipsdir=#{install_dir}/embedded",
+    "fips",
+  ].join(" ")
+
+  common_args = [ common_args, fips_args ].join(" ") if fips_mode
 
   configure_command = case ohai["platform"]
                       when "aix"
