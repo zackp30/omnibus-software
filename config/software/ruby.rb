@@ -18,14 +18,20 @@ name "ruby"
 default_version "1.9.3-p550"
 
 dependency "zlib"
-dependency "ncurses"
-dependency "libedit"
+dependency "ncurses" unless windows?
+dependency "libedit" unless windows?
 dependency "openssl"
 dependency "libyaml"
-dependency "libiconv" # Removal will break chef_gem installs of (e.g.) nokogiri on upgrades
+# Needed for chef_gem installs of (e.g.) nokogiri on upgrades -
+# they expect to see our libiconv instead of a system version.
+# Ignore on windows - TDM GCC comes with libiconv in the runtime
+# and that's the only one we will ever use.
+dependency "libiconv" unless windows?
 dependency "libffi"
-dependency "patch" if solaris2?
+dependency "patch" if solaris2? || windows?
+dependency "mingw" if windows?
 
+unless windows?
 version("1.9.3-p484") { source md5: "8ac0dee72fe12d75c8b2d0ef5d0c2968" }
 version("1.9.3-p547") { source md5: "7531f9b1b35b16f3eb3d7bea786babfd" }
 version("1.9.3-p550") { source md5: "e05135be8f109b2845229c4f47f980fd" }
@@ -38,11 +44,15 @@ version("2.1.3")      { source md5: "74a37b9ad90e4ea63c0eed32b9d5b18f" }
 version("2.1.4")      { source md5: "89b2f4a197621346f6724a3c35535b19" }
 version("2.1.5")      { source md5: "df4c1b23f624a50513c7a78cb51a13dc" }
 version("2.1.6")      { source md5: "6e5564364be085c45576787b48eeb75f" }
-version("2.1.7")      { source md5: "2e143b8e19b056df46479ae4412550c9" }
 version("2.2.0")      { source md5: "cd03b28fd0b555970f5c4fd481700852" }
 version("2.2.1")      { source md5: "b49fc67a834e4f77249eb73eecffb1c9" }
 version("2.2.2")      { source md5: "326e99ddc75381c7b50c85f7089f3260" }
 version("2.2.3")      { source md5: "150a5efc5f5d8a8011f30aa2594a7654" }
+end
+
+# We've only tested on this version.
+# Allow other versions on windows as it becomes needed.
+version("2.1.7")      { source md5: "2e143b8e19b056df46479ae4412550c9" }
 
 source url: "http://cache.ruby-lang.org/pub/ruby/#{version.match(/^(\d+\.\d+)/)[0]}/ruby-#{version}.tar.gz"
 
@@ -87,6 +97,8 @@ when "solaris2"
   else
     env['CFLAGS'] << " -std=c99 -O3 -g -pipe"
   end
+when "windows"
+  env['CPPFLAGS'] << " -DFD_SETSIZE=2048"
 else  # including linux
   env['CFLAGS'] << " -O3 -g -pipe"
 end
@@ -139,16 +151,14 @@ build do
      patch source: 'ruby-fix-reserve-stack-segfault.patch', plevel: 1, env: patch_env
   end
 
-  configure_command = ["./configure",
-                       "--prefix=#{install_dir}/embedded",
-                       "--with-out-ext=dbm",
+  configure_command = ["--with-out-ext=dbm",
                        "--enable-shared",
-                       "--enable-libedit",
                        "--with-ext=psych",
                        "--disable-install-doc",
                        "--without-gmp",
                        "--without-gdbm",
                        "--disable-dtrace"]
+  configure_command << "--enable-libedit" unless windows?
 
   case ohai['platform']
   when "aix"
@@ -185,6 +195,8 @@ build do
     # https://github.com/wayneeseguin/rvm/commit/86766534fcc26f4582f23842a4d3789707ce6b96
     configure_command << "ac_cv_func_dl_iterate_phdr=no"
     configure_command << "--with-opt-dir=#{install_dir}/embedded"
+  when "windows"
+    configure_command << " debugflags=-g"
   else
     configure_command << "--with-opt-dir=#{install_dir}/embedded"
   end
@@ -194,7 +206,7 @@ build do
   # The alternative would be to patch configure to remove all the pkg-config garbage entirely
   env.merge!("PKG_CONFIG" => "/bin/true") if aix?
 
-  command configure_command.join(" "), env: env
+  configure(*configure_command, env: env)
   make "-j #{workers}", env: env
   make "-j #{workers} install", env: env
 

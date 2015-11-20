@@ -1,5 +1,5 @@
 #
-# Copyright 2012-2014 Chef Software, Inc.
+# Copyright 2012-2015 Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,13 @@ name "libffi"
 
 default_version "3.2.1"
 
-dependency "libtool"
+if windows?
+  dependency "patch"
+  dependency "mingw"
+else
+  # Is libtool actually necessary? Doesn't configure generate one?
+  dependency "libtool" unless windows?
+end
 
 version("3.0.13") { source md5: "45f3b6dbc9ee7c7dfbbbc5feba571529" }
 version("3.2.1")  { source md5: "83b89587607e3eb65c70d361f13bab43" }
@@ -32,11 +38,7 @@ build do
 
   env['INSTALL'] = "/opt/freeware/bin/install" if ohai['platform'] == "aix"
 
-  configure_command = [
-    "./configure",
-    "--prefix=#{install_dir}/embedded",
-  ]
-
+  configure_command = []
   # Patch to disable multi-os-directory via configure flag (don't use /lib64)
   # Works on all platforms, and is compatible on 32bit platforms as well
   if version == "3.2.1"
@@ -44,7 +46,7 @@ build do
     configure_command << "--disable-multi-os-directory"
   end
 
-  command configure_command.join(" "), env: env
+  configure(*configure_command, env: env)
 
   if solaris2?
     # run old make :(
