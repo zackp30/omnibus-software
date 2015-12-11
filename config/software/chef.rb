@@ -59,12 +59,12 @@ build do
       copy "#{install_dir}/embedded/mingw/bin/#{to}", "#{install_dir}/bin/#{target}"
     end
 
+    bundle "install --verbose --without server docgen", env: env
+
     gem "build chef-x86-mingw32.gemspec", env: env
     gem "install chef*mingw32.gem" \
         " --no-ri --no-rdoc" \
         " --verbose", env: env
-
-    bundle "install --without server docgen", env: env
 
     block "Build Event Log Dll" do
       Dir.chdir software.project_dir do
@@ -75,7 +75,7 @@ build do
   else
 
     # install the whole bundle first
-    bundle "install --without server docgen", env: env
+    bundle "install --verbose --without server docgen", env: env
 
     gem "build chef.gemspec", env: env
 
