@@ -47,11 +47,16 @@ build do
     "no-idea",
     "no-mdc2",
     "no-rc5",
-    "zlib",
     "shared",
     env['LDFLAGS'],
     env['CFLAGS'],
   ]
+
+  if windows?
+    configure_args << "zlib-dynamic"
+  else
+    configure_args << "zlib"
+  end
 
   configure_cmd =
     case ohai["platform"]
