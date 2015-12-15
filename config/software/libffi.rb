@@ -34,7 +34,7 @@ source url: "ftp://sourceware.org/pub/libffi/libffi-#{version}.tar.gz"
 relative_path "libffi-#{version}"
 
 build do
-  env = with_standard_compiler_flags(with_embedded_path)
+  env = with_standard_compiler_flags(with_embedded_path({}, msys: true))
 
   env['INSTALL'] = "/opt/freeware/bin/install" if ohai['platform'] == "aix"
 

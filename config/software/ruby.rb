@@ -58,7 +58,7 @@ source url: "http://cache.ruby-lang.org/pub/ruby/#{version.match(/^(\d+\.\d+)/)[
 
 relative_path "ruby-#{version}"
 
-env = with_standard_compiler_flags(with_embedded_path)
+env = with_standard_compiler_flags(with_embedded_path({}, msys: true))
 
 case ohai['platform']
 when "mac_os_x"

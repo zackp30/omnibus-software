@@ -34,7 +34,7 @@ relative_path "openssl-#{version}"
 
 build do
 
-  env = with_standard_compiler_flags(with_embedded_path)
+  env = with_standard_compiler_flags(with_embedded_path({}, msys: true))
   if ohai["platform"] == "aix"
     env["M4"] = "/opt/freeware/bin/m4"
   end
