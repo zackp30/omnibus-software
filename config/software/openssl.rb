@@ -21,6 +21,7 @@ dependency "cacerts"
 dependency "makedepend" unless aix? || windows?
 dependency "patch" if solaris2? || windows?
 dependency "mingw" if windows?
+dependency "perl" if windows?
 
 default_version "1.0.1q"
 
