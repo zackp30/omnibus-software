@@ -101,7 +101,7 @@ build do
 
   configure_command = configure_args.unshift(configure_cmd).join(" ")
 
-  command configure_command, env: env
+  command configure_command, env: env, in_msys_bash: true
   make "depend", env: env
   # make -j N on openssl is not reliable
   make env: env
