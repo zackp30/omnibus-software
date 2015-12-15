@@ -104,6 +104,15 @@ build do
     patch source: "openssl-1.0.1f-do-not-build-docs.patch", env: env
   end
 
+  if windows?
+    # Patch Makefile.shared to let us set the bit-ness of the resource compiler.
+    patch source: "openssl-1.0.1q-take-windres-rcflags.patch", env: env
+    # Patch Makefile.org to update the compiler flags/options table for mingw.
+    patch source: "openssl-1.0.1q-fix-compiler-flags-table-for-msys.patch", env: env
+    # Patch Configure to call ar.exe without anooying it.
+    patch source: "openssl-1.0.1q-ar-needs-operation-before-target.patch", env: env
+  end
+
   configure_command = configure_args.unshift(configure_cmd).join(" ")
 
   command configure_command, env: env, in_msys_bash: true
