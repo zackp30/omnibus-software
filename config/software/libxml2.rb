@@ -44,6 +44,7 @@ build do
           " --prefix=#{install_dir}/embedded" \
           " --with-zlib=#{install_dir}/embedded" \
           " --with-iconv=#{install_dir}/embedded" \
+          " --with-lzma=#{install_dir}/embedded" \
           " --without-python" \
           " --without-icu", env: env
 
