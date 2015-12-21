@@ -48,10 +48,10 @@ build do
           " --prefix=#{install_dir}/embedded" \
           " --with-zlib=#{install_dir}/embedded" \
           " --with-iconv=#{install_dir}/embedded" \
-          # " --with-lzma=#{install_dir}/embedded" \
           " --without-lzma" \
           " --without-python" \
           " --without-icu", env: env
+          # " --with-lzma=#{install_dir}/embedded" \
 
   make "-j #{workers}", env: env
   make "install", env: env

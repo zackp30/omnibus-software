@@ -26,6 +26,7 @@ build do
   env = with_standard_compiler_flags(with_embedded_path)
 
   command "./configure" \
+          " --libdir=#{install_dir}/embedded/lib" \
           " --prefix=#{install_dir}/embedded", env: env
 
   make "-j #{workers}", env: env
