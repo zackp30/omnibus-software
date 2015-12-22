@@ -69,9 +69,9 @@ build do
       " --version '#{version}'" \
       " --" \
       " --use-system-libraries" \
-      " --with-xml2-lib=#{install_dir}/embedded/lib" \
+      " --with-xml2-lib=#{install_dir}/embedded/lib64" \
       " --with-xml2-include=#{install_dir}/embedded/include/libxml2" \
-      " --with-xslt-lib=#{install_dir}/embedded/lib" \
+      " --with-xslt-lib=#{install_dir}/embedded/lib64" \
       " --with-xslt-include=#{install_dir}/embedded/include/libxslt" \
       " --with-iconv-dir=#{install_dir}/embedded" \
       " --with-zlib-dir=#{install_dir}/embedded", env: env
