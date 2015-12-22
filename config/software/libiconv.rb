@@ -31,7 +31,9 @@ build do
   env = with_standard_compiler_flags(with_embedded_path)
 
   configure_command = "./configure" \
-                      " --prefix=#{install_dir}/embedded"
+                      " --prefix=#{install_dir}/embedded" \
+                      " --libdir=#{install_dir}/embedded/lib" \
+                      " --includedir=#{install_dir}/embedded/include"
   if aix?
     patch_env = env.dup
     patch_env['PATH'] = "/opt/freeware/bin:#{env['PATH']}"
@@ -55,7 +57,5 @@ build do
   command configure_command, env: env
 
   make "-j #{workers}", env: env
-  make "-j #{workers} install-lib" \
-          " libdir=#{install_dir}/embedded/lib" \
-          " includedir=#{install_dir}/embedded/include", env: env
+  make "-j #{workers} install-lib", env: env
 end
